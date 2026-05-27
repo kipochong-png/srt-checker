@@ -37,7 +37,262 @@
 
 <header>
   <h1>UK Statutory Residence Test – Self Check</h1>
-  <div class="brand">Powered by <b>Earnest Partners</b> · Cross-border Tax & Immigration Advisory</div>
+  <div class="brand">Powered by <b>Earnest Partners</b> · Cross-border Tax &amp; Immigration Advisory</div>
 </header>
 
-<p class="note">本工具根據 HMRC Statutory Residence Test (RDR3) 規則，幫你評估指定英國稅年度 (6 April – 5 April) 嘅稅務居民身份。請逐條問題作答。</p>
+<p class="note">本工具根據 HMRC Statutory Residence Test (RDR3) 規則，幫你評估指定英國稅年度 (6 April – 5 April) 嘅稅務居民身份。請逐條問題作答，完成後按「計算結果」。</p>
+
+<!-- Card 1: Tax Year -->
+<div class="card">
+  <h2>Part 1 — 稅年度</h2>
+  <div class="question">
+    <p>你想評估哪個英國稅年度？</p>
+    <p class="hint">例如 2024/25（2024年4月6日 至 2025年4月5日）</p>
+    <input type="text" id="taxYear" placeholder="e.g. 2025/26" style="width:140px;">
+  </div>
+</div>
+
+<!-- Card 2: UK Days -->
+<div class="card">
+  <h2>Part 2 — 英國逗留日數</h2>
+  <div class="question">
+    <p>今個稅年度，你在英國境內逗留共多少日？</p>
+    <p class="hint">以「午夜（00:00）在英國」計算每一日。因特殊情況（重病/戰亂等）最多可扣除60日。</p>
+    <input type="number" id="ukDays" min="0" max="366" placeholder="0"> 日
+  </div>
+</div>
+
+<!-- Card 3: Prior Residence -->
+<div class="card">
+  <h2>Part 3 — 過往居民背景</h2>
+  <div class="question">
+    <p>過去3個稅年度，你有沒有任何一年是英國稅務居民？</p>
+    <div class="yesno">
+      <label><input type="radio" name="priorResident" value="yes"> 有</label>
+      <label><input type="radio" name="priorResident" value="no" checked> 沒有</label>
+    </div>
+  </div>
+</div>
+
+<!-- Card 4: Work Pattern -->
+<div class="card">
+  <h2>Part 4 — 工作模式</h2>
+  <div class="question">
+    <p>今個稅年度，你在英國工作（每日 &gt;3小時）的日數是多少？</p>
+    <input type="number" id="ukWorkDays" min="0" max="366" placeholder="0"> 日
+  </div>
+  <div class="question">
+    <p>你是否全年在海外全職工作？</p>
+    <p class="hint">須符合：無連續31日中斷海外工作、英國工作日&lt;31日、英國逗留日&lt;91日</p>
+    <div class="yesno">
+      <label><input type="radio" name="fullTimeOverseas" value="yes"> 是</label>
+      <label><input type="radio" name="fullTimeOverseas" value="no" checked> 否</label>
+    </div>
+  </div>
+  <div class="question">
+    <p>你是否在任何365日連續期間內，在英國全職工作，且≥75%工作日在英國，並至少一日落入今個稅年度？</p>
+    <div class="yesno">
+      <label><input type="radio" name="fullTimeUK" value="yes"> 是</label>
+      <label><input type="radio" name="fullTimeUK" value="no" checked> 否</label>
+    </div>
+  </div>
+</div>
+
+<!-- Card 5: UK Home Test -->
+<div class="card">
+  <h2>Part 5 — 英國住所測試（UK Home Test）</h2>
+  <div class="question">
+    <p>你是否曾在英國擁有可使用的住所，連續≥91日（其中≥30日落在本稅年度），並實際入住≥30日，而同期你沒有海外住所或海外住所入住&lt;30日？</p>
+    <div class="yesno">
+      <label><input type="radio" name="ukHomeTest" value="yes"> 是</label>
+      <label><input type="radio" name="ukHomeTest" value="no" checked> 否</label>
+    </div>
+  </div>
+</div>
+
+<!-- Card 6: Ties -->
+<div class="card">
+  <h2>Part 6 — 英國聯繫（UK Ties）</h2>
+  <p class="note">請勾選所有適用項目：</p>
+  <div class="question">
+    <label>
+      <input type="checkbox" id="tieFamily">
+      <b>Family tie</b> — 配偶 / 民事伴侶 / 同居伴侶 / 未滿18歲子女屬英國稅務居民
+    </label>
+  </div>
+  <div class="question">
+    <label>
+      <input type="checkbox" id="tieAccommodation">
+      <b>Accommodation tie</b> — 今年於英國有可使用住宿，並至少使用一晚（如借住親屬家則需≥16晚）
+    </label>
+  </div>
+  <div class="question">
+    <label>
+      <input type="checkbox" id="tieWork">
+      <b>Work tie</b> — 今年於英國工作（&gt;3小時）日數≥40日
+    </label>
+  </div>
+  <div class="question">
+    <label>
+      <input type="checkbox" id="tie90Days">
+      <b>90-day tie</b> — 過去2個稅年度中，至少一年在英國逗留≥90日
+    </label>
+  </div>
+  <div class="question">
+    <label>
+      <input type="checkbox" id="tieCountry">
+      <b>Country tie</b>（只適用於過去3年曾是英國居民）— 今個稅年度，英國是你逗留日數最多的國家
+    </label>
+  </div>
+</div>
+
+<!-- Buttons -->
+<button class="primary" onclick="calculateSRT()">計算結果</button>
+<button class="secondary" onclick="resetForm()">重設</button>
+
+<!-- Result -->
+<div id="result" style="display:none; margin-top:20px;"></div>
+
+<!-- Footer -->
+<footer>
+  <p>⚠️ 本工具僅供參考，不構成法律或稅務建議。複雜情況（Split Year Treatment、特殊情況扣日、FIG新制度等）請諮詢專業顧問。</p>
+  <p>Source: <a href="https://www.gov.uk/government/publications/rdr3-statutory-residence-test-srt" target="_blank">HMRC RDR3 – Statutory Residence Test</a> · &copy; Earnest Partners</p>
+</footer>
+
+<script>
+function getRadio(name) {
+  const el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : null;
+}
+
+function calculateSRT() {
+  const taxYear = document.getElementById('taxYear').value || 'this tax year';
+  const ukDays = Number(document.getElementById('ukDays').value || 0);
+  const priorResident = getRadio('priorResident') === 'yes';
+  const ukWorkDays = Number(document.getElementById('ukWorkDays').value || 0);
+  const fullTimeOverseas = getRadio('fullTimeOverseas') === 'yes';
+  const fullTimeUK = getRadio('fullTimeUK') === 'yes';
+  const ukHomeTest = getRadio('ukHomeTest') === 'yes';
+
+  let ties = 0;
+  if (document.getElementById('tieFamily').checked) ties++;
+  if (document.getElementById('tieAccommodation').checked) ties++;
+  if (document.getElementById('tieWork').checked) ties++;
+  if (document.getElementById('tie90Days').checked) ties++;
+  if (document.getElementById('tieCountry').checked && priorResident) ties++;
+
+  let status = '';
+  let reason = '';
+  let detail = '';
+
+  // Step 1 – 183-day automatic UK resident
+  if (ukDays >= 183) {
+    status = 'UK Resident';
+    reason = '自動英國居民（183日測試）';
+    detail = '你在 ' + taxYear + ' 稅年度於英國逗留 ' + ukDays + ' 日（≥183日），自動成為英國稅務居民。';
+    return showResult(status, reason, detail);
+  }
+
+  // Step 2 – Automatic overseas tests
+  if (priorResident && ukDays < 16) {
+    status = 'Non-UK Resident';
+    reason = '自動海外非居民（曾為居民，逗留&lt;16日）';
+    detail = '過去3年曾是英國居民，但今年只在英國逗留 ' + ukDays + ' 日（&lt;16日），自動成為非居民。';
+    return showResult(status, reason, detail);
+  }
+
+  if (!priorResident && ukDays < 46) {
+    status = 'Non-UK Resident';
+    reason = '自動海外非居民（從未是居民，逗留&lt;46日）';
+    detail = '過去3年從未是英國居民，而今年只在英國逗留 ' + ukDays + ' 日（&lt;46日），自動成為非居民。';
+    return showResult(status, reason, detail);
+  }
+
+  if (fullTimeOverseas && ukDays < 91 && ukWorkDays < 31) {
+    status = 'Non-UK Resident';
+    reason = '自動海外非居民（全職海外工作測試）';
+    detail = '符合全職海外工作條件（英國逗留&lt;91日、英國工作日&lt;31日），自動成為非居民。';
+    return showResult(status, reason, detail);
+  }
+
+  // Step 3 – Automatic UK tests
+  if (ukHomeTest) {
+    status = 'UK Resident';
+    reason = '自動英國居民（UK Home Test）';
+    detail = '符合英國住所測試（連續91日住所，實際使用≥30日，無重大海外住所），自動成為英國稅務居民。';
+    return showResult(status, reason, detail);
+  }
+
+  if (fullTimeUK) {
+    status = 'UK Resident';
+    reason = '自動英國居民（全職在英工作測試）';
+    detail = '在英國全職工作的365日連續期間落入 ' + taxYear + '，且≥75%工作日在英國，自動成為英國稅務居民。';
+    return showResult(status, reason, detail);
+  }
+
+  // Step 4 – Sufficient ties test
+  const needed = tiesThreshold(ukDays, priorResident);
+  if (needed === null) {
+    status = 'Non-UK Resident';
+    reason = '非英國稅務居民（日數不足）';
+    detail = '根據你嘅情況，日數不足以配合任何聯繫組合達到居民門檻。';
+    return showResult(status, reason, detail);
+  }
+
+  if (ties >= needed) {
+    status = 'UK Resident';
+    reason = '英國稅務居民（Sufficient Ties Test）';
+    detail = '你不符合任何自動測試，但你有 ' + ties + ' 個英國聯繫，加上在英國逗留 ' + ukDays + ' 日，已達到「足夠聯繫測試」門檻（需要 ' + needed + ' 個），因此是英國稅務居民。';
+    return showResult(status, reason, detail);
+  } else {
+    status = 'Non-UK Resident';
+    reason = '非英國稅務居民（Sufficient Ties Test — 聯繫不足）';
+    detail = '你不符合任何自動測試，而你只有 ' + ties + ' 個英國聯繫，加上在英國逗留 ' + ukDays + ' 日，未達到門檻（需要 ' + needed + ' 個），因此是非居民。';
+    return showResult(status, reason, detail);
+  }
+}
+
+function tiesThreshold(ukDays, priorResident) {
+  if (priorResident) {
+    if (ukDays >= 16 && ukDays <= 45) return 4;
+    if (ukDays >= 46 && ukDays <= 90) return 3;
+    if (ukDays >= 91 && ukDays <= 120) return 2;
+    if (ukDays > 120) return 1;
+    return null;
+  } else {
+    if (ukDays >= 46 && ukDays <= 90) return 4;
+    if (ukDays >= 91 && ukDays <= 120) return 3;
+    if (ukDays > 120) return 2;
+    return null;
+  }
+}
+
+function showResult(status, reason, detail) {
+  const div = document.getElementById('result');
+  div.style.display = 'block';
+  const isResident = status === 'UK Resident';
+  div.className = isResident ? 'resident' : 'nonresident';
+  div.innerHTML =
+    '<h2 style="margin-top:0">' + (isResident ? '🟢' : '🔴') + ' ' + status + '</h2>' +
+    '<p><b>判定依據：</b>' + reason + '</p>' +
+    '<p>' + detail + '</p>' +
+    '<p class="note">⚠️ 本結果僅供參考。Split Year Treatment、特殊情況、FIG制度等複雜因素請諮詢專業稅務顧問。</p>' +
+    '<button class="secondary" onclick="window.print()">列印 / 儲存PDF</button>';
+  div.scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetForm() {
+  document.getElementById('taxYear').value = '';
+  document.getElementById('ukDays').value = '';
+  document.getElementById('ukWorkDays').value = '';
+  document.querySelectorAll('input[type="radio"]').forEach(r => {
+    r.checked = r.value === 'no';
+  });
+  document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+  const result = document.getElementById('result');
+  result.style.display = 'none';
+  result.innerHTML = '';
+}
+</script>
+</body>
+</html>
